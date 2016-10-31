@@ -35,16 +35,17 @@ function initialization() {
 function appendJudge(judges) {
   var dest = document.getElementById('judge');
   var option
+  option = document.createElement("option");
+  option.text= 'All Judges (average)';
+  option.value='all';
+  dest.add(option);
   for(var i=0; i<judges.length; i++) {
     option = document.createElement("option");
     option.text=judges[i].judge;
     option.value=judges[i].judge;
     dest.add(option);
   }
-  option = document.createElement("option");
-  option.text= 'All Judges';
-  option.value='all';
-  dest.add(option);
+
   changeInfo();
 }
 
@@ -229,21 +230,24 @@ function changeInfo() {
             {
               political-=1;
             }
-            comments = comments + judges[i].comments +'.';
+            if(judges[i].comments!=''){
+              comments = comments + judges[i].comments +'\n';
+            }
+            
         }
-        $('#DA').val(da/judges.length);
-        $('#DB').val(db/judges.length);
-        $('#DC').val(dc/judges.length);
-        $('#DD').val(dd/judges.length);
-        $('#DE').val(de/judges.length);
-        $('#DF').val(df/judges.length);
-        $('#DG').val(dg/judges.length);
-        $('#DH').val(dh/judges.length);
-        $('#PA').val(pa/judges.length);
-        $('#PB').val(pb/judges.length);
-        $('#PC').val(pc/judges.length);
-        $('#PD').val(pd/judges.length);
-        $('#GrandTotal').val(total/judges.length);
+        $('#DA').val(Math.round(da/judges.length * 100) / 100);
+        $('#DB').val(Math.round(db/judges.length * 100) / 100);
+        $('#DC').val(Math.round(dc/judges.length * 100) / 100);
+        $('#DD').val(Math.round(dd/judges.length * 100) / 100);
+        $('#DE').val(Math.round(de/judges.length * 100) / 100);
+        $('#DF').val(Math.round(df/judges.length * 100) / 100);
+        $('#DG').val(Math.round(dg/judges.length * 100) / 100);
+        $('#DH').val(Math.round(dh/judges.length * 100) / 100);
+        $('#PA').val(Math.round(pa/judges.length * 100) / 100);
+        $('#PB').val(Math.round(pb/judges.length * 100) / 100);
+        $('#PC').val(Math.round(pc/judges.length * 100) / 100);
+        $('#PD').val(Math.round(pd/judges.length * 100) / 100);
+        $('#GrandTotal').val(Math.round(total/judges.length * 100) / 100);
         $( "#economic" ).prop( "checked", economic>0);
         $( "#environmental" ).prop( "checked", environmental> 0);
         $( "#sustainability" ).prop( "checked", sustainability>0);
@@ -253,6 +257,7 @@ function changeInfo() {
         $( "#social" ).prop( "checked", social>0);
         $( "#political" ).prop( "checked", political>0);
         $('#comments').val(comments);
+        console.log(total);
       }
       else
       {
