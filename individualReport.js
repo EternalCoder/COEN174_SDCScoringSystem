@@ -1,35 +1,43 @@
 function initialization() {
+  var code = localStorage.getItem('project_code');
 
-  //get project code
-    var code = null;
+  if(code == null){
+    window.location.href = 'login.html';
+  }
+  else{
+    //get project code
+      code = null;
+      
+      while (code == null || code === "") {
+        code = prompt("Please enter the project code", "");
+      }
+
+    //get data from server
+    localStorage.setItem('form_project_code',code);
+    $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=get&code='+code).done(function(result) {
+      var project = result;
+      if(project != false) {
+        appendInfo(project);
+      }
+      else
+      {
+        alert("Error: Invalid Code");
+      }
+    });
+      $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudges&code='+code).done(function(result) {
+      var judges = result;
+      if(judges != false) {
+        console.log(judges);
+        appendJudge(judges);
+      }
+      else
+      {
+        alert("Error: No evaluation form submitted for this project yet");
+      }
+    });
+      localStorage.removeItem('project_code')
+  }
     
-    while (code == null) {
-      code = prompt("Please enter the project code", "");
-    }
-
-  //get data from server
-  localStorage.setItem('form_project_code',code);
-  $.get('http://students.engr.scu.edu/~yli/index.php?job=get&code='+code).done(function(result) {
-    var project = result;
-    if(project != false) {
-      appendInfo(project);
-    }
-    else
-    {
-      alert("Error: Invalid Code");
-    }
-  });
-    $.get('http://students.engr.scu.edu/~yli/index.php?job=getJudges&code='+code).done(function(result) {
-    var judges = result;
-    if(judges != false) {
-      console.log(judges);
-      appendJudge(judges);
-    }
-    else
-    {
-      alert("Error: No evaluation form submitted for this project yet");
-    }
-  });
 }
 
 function appendJudge(judges) {
@@ -86,7 +94,7 @@ function changeInfo() {
   var code = localStorage.getItem('form_project_code');
   var judge = $('#judge').val();
   if(judge != 'all'){
-      $.get('http://students.engr.scu.edu/~yli/index.php?job=getJudge&code='+code+'&judge='+judge).done(function(result) {
+      $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudge&code='+code+'&judge='+judge).done(function(result) {
       var eva = result;
       if(eva != false) {
         console.log('changeInfo');
@@ -101,7 +109,7 @@ function changeInfo() {
   }
   else
   {
-      $.get('http://students.engr.scu.edu/~yli/index.php?job=getJudges&code='+code).done(function(result) {
+      $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudges&code='+code).done(function(result) {
       var judges = result;
       if(judges != false) {
         var da=0;
@@ -164,6 +172,7 @@ function changeInfo() {
               pd += parseInt(judges[i].pd);
             }
             if(Number.isInteger(parseInt(judges[i].total))) {
+              console.log(judges[i].total);
               total += parseInt(judges[i].total);
             }
             if(judges[i].economic === "true")
@@ -257,7 +266,8 @@ function changeInfo() {
         $( "#social" ).prop( "checked", social>0);
         $( "#political" ).prop( "checked", political>0);
         $('#comments').val(comments);
-        console.log(total);
+        console.log('update');
+        console.log($('#GrandTotal').val());
       }
       else
       {
@@ -268,8 +278,6 @@ function changeInfo() {
 }
 
 function updateInfo(eva) {
-  //ocument.getElementById('#DA').value = eva.da;
-  console.log(eva);
   $('#DA').val(eva.da);
   $('#DB').val(eva.db);
   $('#DC').val(eva.dc);
@@ -292,10 +300,10 @@ function updateInfo(eva) {
   $( "#political" ).prop( "checked", eva.political=== "true");
   $('#comments').val(eva.comments);
   changeGrandTotal();
-  console.log('changeTotal');
 }
 
 function changeGrandTotal() {
+  console.log("change!!!");
     var list = document.getElementsByClassName('score');
     var sum = 0;
     for (var i=0, len=list.length; i<len; i++) {

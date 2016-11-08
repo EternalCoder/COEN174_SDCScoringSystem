@@ -1,9 +1,9 @@
 body {margin-top: 0px;margin-left: 0px;}
 
-#page_1 {position:relative; overflow: hidden;margin: 22px 0px 65px 48px;padding: 0px;border: none;width: 768px;}
+#page_1 {position:relative; overflow: hidden;margin: 22px 0px 65px 48px;padding: 0px;border: none;width: 1000px;}
 
-#page_1 #p1dimg1 {position:absolute;top:0px;left:0px;z-index:-1;width:720px;height:969px;}
-#page_1 #p1dimg1 #p1img1 {width:720px;height:969px;}
+#page_1 #p1dimg1 {position:absolute;top:0px;left:0px;z-index:-1;width:1000px;height:969px;}
+#page_1 #p1dimg1 #p1img1 {width:1000px;height:969px;}
 
 
 

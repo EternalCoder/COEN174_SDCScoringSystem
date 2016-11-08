@@ -1,11 +1,18 @@
 function initialization() {
 
   //get project code
-  localStorage.setItem('project_code',60);
+  //localStorage.setItem('project_code',59);
   var code = localStorage.getItem('project_code');
 
-  //get data from server
-  $.get('http://students.engr.scu.edu/~yli/index.php?job=get&code='+code).done(function(result) {
+  localStorage.setItem('project_temp_code',code);
+  if(code == null){
+    window.location.href = 'login.html';
+  }
+  else
+  {
+    localStorage.removeItem('project_code');
+    //get data from server
+  $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=get&code='+code).done(function(result) {
     var project = result;
     if(project != false) {
       appendInfo(project);
@@ -16,6 +23,9 @@ function initialization() {
       window.location.href = 'login.html';
     }
   });
+  }
+
+  
 }
 
 function appendInfo(project) {
@@ -70,15 +80,18 @@ function submit() {
         r = confirm('Are you sure you want to submit the form?')
         if (r) {
           console.log('submit');
-            var code = localStorage.getItem('project_code');
+            var code = localStorage.getItem('project_temp_code');
             //fetch data from page and create a new object
             var newEva= {code:code,session:$('#session').val(),judge: $('#judge').val(),da: $('#DA').val(),db: $('#DB').val(),dc: $('#DC').val(),dd: $('#DD').val(),de: $('#DE').val(),df: $('#DF').val(),dg: $('#DG').val(),dh: $('#DH').val(),pa: $('#PA').val(),pb: $('#PB').val(),pc: $('#PC').val(),pd: $('#PD').val(),total: $('#GrandTotal').val(),economic:$('#economic').is(':checked'),environmental:$('#environmental').is(':checked'),sustainability:$('#sustainability').is(':checked'),manufacturability:$('#manufacturability').is(':checked'),ethical:$('#ethical').is(':checked'),healthandsafety:$('#healthandsafety').is(':checked'),social:$('#social').is(':checked'),political:$('#political').is(':checked'),comments:$('#comments').val()};
-            var url = 'http://students.engr.scu.edu/~yli/index.php?job=post&code='+newEva.code+'&session='+newEva.session+'&judge='+newEva.judge+'&da='+newEva.da+'&db='+newEva.db+'&dc='+newEva.dc+'&dd='+newEva.dd+'&de='+newEva.de+'&df='+newEva.df+'&dg='+newEva.dg+'&dh='+newEva.dg+'&pa='+newEva.pa+'&pb='+newEva.pb+'&pc='+newEva.pc+'&pd='+newEva.pd+'&total='+newEva.total+'&economic='+newEva.economic+'&environmental='+newEva.environmental+'&sustainability='+newEva.sustainability+'&manufacturability='+newEva.manufacturability+'&ethical='+newEva.ethical+'&healthandsafety='+newEva.healthandsafety+'&social='+newEva.social+'&political='+newEva.political+'&comments='+newEva.comments;
+            var url = 'http://students.engr.scu.edu/~yli/COEN174/index.php?job=post&code='+newEva.code+'&session='+newEva.session+'&judge='+newEva.judge+'&da='+newEva.da+'&db='+newEva.db+'&dc='+newEva.dc+'&dd='+newEva.dd+'&de='+newEva.de+'&df='+newEva.df+'&dg='+newEva.dg+'&dh='+newEva.dg+'&pa='+newEva.pa+'&pb='+newEva.pb+'&pc='+newEva.pc+'&pd='+newEva.pd+'&total='+newEva.total+'&economic='+newEva.economic+'&environmental='+newEva.environmental+'&sustainability='+newEva.sustainability+'&manufacturability='+newEva.manufacturability+'&ethical='+newEva.ethical+'&healthandsafety='+newEva.healthandsafety+'&social='+newEva.social+'&political='+newEva.political+'&comments='+newEva.comments;
             console.log(url);
               $.get(url).done(function(result) {
                 alert(result);
-                localStorage.removeItem('project_code');
-                //window.location.href = 'login.html';
+                console.log(result);
+                if(result != 'Evaluation Submitted Failed: Record already exist'){
+                  localStorage.removeItem('project_temp_code');
+                    window.location.href = 'login.html';
+                }
               });
         }
       }

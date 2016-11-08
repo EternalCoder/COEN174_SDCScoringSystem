@@ -113,40 +113,141 @@ if($method == 'GET') {
     //get code of the project
     $session = $_GET['session'];
 
-    $sql = "select * from evaluations where session='".$session."'";
+    $sql = "select * from evaluations where session='".$session."' ORDER BY code";
     
     //fetch data
     //code from http://code.stephenmorley.org/php/creating-downloadable-csv-files/
     // output headers so that the file is downloaded rather than displayed
+    $session = str_replace(' ', '_', $session);
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=data.csv');
+    header('Content-Disposition: attachment; filename='.$session.'.csv');
 
     // create a file pointer connected to the output stream
     $output = fopen('php://output', 'w');
 
-    // output the column headings
-    fputcsv($output, array('Code','Session','Judge','Technical Accuracy','Creativity and Innovation','Supporting Analytical Work','Methodical Design Process Demonstrated','Addresses Project Complexity Appropriately','Expectation of Completion (by term’s end)','Design & Analysis of tests','Quality of Response during Q&A','Organization','Use of Allotted Time','Visual Aids','Confidence and Poise','Grand Total','Economic','Environmental','Sustainability','Manufacturability','Ethical','Health and Safety','Social','Political','Comments'));
+    $summary =$dbh->query($sql);
 
 
-    
-    //fetch data
-    $result = $dbh->query($sql);
-
-    if($row = $result->fetch())
+    if($each = $summary->fetch())
     {
-           do{
-           //loop over the rows, outputting them
+        fputcsv($output, array('Code','Session','Technical Accuracy','Creativity and Innovation','Supporting Analytical Work','Methodical Design Process Demonstrated','Addresses Project Complexity Appropriately','Expectation of Completion (by term’s end)','Design & Analysis of tests','Quality of Response during Q&A','Organization','Use of Allotted Time','Visual Aids','Confidence and Poise','Grand Total'));
+        $current = $each;
+        $counter = 1;
+           while($each = $summary->fetch()){
+             if($current['code']==$each['code']){
+               $counter++;
+               $current['da'] += $each['da'];
+               $current['db'] += $each['da'];
+               $current['dc'] += $each['da'];
+               $current['dd'] += $each['da'];
+               $current['de'] += $each['da'];
+               $current['df'] += $each['da'];
+               $current['dg'] += $each['da'];
+               $current['dh'] += $each['da'];
+               $current['pa'] += $each['da'];
+               $current['pb'] += $each['da'];
+               $current['pc'] += $each['da'];
+               $current['pd'] += $each['da'];
+               $current['total'] += $each['total'];
+             }
+             else {
+               $current['da'] /= $counter;
+               $current['db'] /= $counter;
+               $current['dc'] /= $counter;
+               $current['dd'] /= $counter;
+               $current['de'] /= $counter;
+               $current['df'] /= $counter;
+               $current['dg'] /= $counter;
+               $current['dh'] /= $counter;
+               $current['pa'] /= $counter;
+               $current['pb'] /= $counter;
+               $current['pc'] /= $counter;
+               $current['pd'] /= $counter;
+               $current['total'] /= $counter;
+               //remove all number indexed mapping
+             for($i=0; $i<25; $i++) {
+              unset($current[$i]);
+            }
+            unset($current['judge']);
+            unset($current['economic']);
+            unset($current['environmental']);
+            unset($current['sustainability']);
+            unset($current['manufacturability']);
+            unset($current['ethical']);
+            unset($current['healthandsafety']);
+            unset($current['social']);
+            unset($current['political']);
+            unset($current['comments']);
+               fputcsv($output, $current);
+               $counter = 1;
+               $current = $each;
+             }
+           }
+            $current['da'] /= $counter;
+            $current['db'] /= $counter;
+            $current['dc'] /= $counter;
+            $current['dd'] /= $counter;
+            $current['de'] /= $counter;
+            $current['df'] /= $counter;
+            $current['dg'] /= $counter;
+            $current['dh'] /= $counter;
+            $current['pa'] /= $counter;
+            $current['pb'] /= $counter;
+            $current['pc'] /= $counter;
+            $current['pd'] /= $counter;
+            $current['total'] /= $counter;
+            //remove all number indexed mapping
+            for($i=0; $i<25; $i++) {
+              unset($current[$i]);
+            }
+            unset($current['judge']);
+            unset($current['economic']);
+            unset($current['environmental']);
+            unset($current['sustainability']);
+            unset($current['manufacturability']);
+            unset($current['ethical']);
+            unset($current['healthandsafety']);
+            unset($current['social']);
+            unset($current['political']);
+            unset($current['comments']);
+            fputcsv($output, $current);
+            fputcsv($output, array());
+            fputcsv($output, array());
+            fputcsv($output, array());
+          // output the column headings
+          fputcsv($output, array('Code','Session','Judge','Technical Accuracy','Creativity and Innovation','Supporting Analytical Work','Methodical Design Process Demonstrated','Addresses Project Complexity Appropriately','Expectation of Completion (by term’s end)','Design & Analysis of tests','Quality of Response during Q&A','Organization','Use of Allotted Time','Visual Aids','Confidence and Poise','Grand Total','Economic','Environmental','Sustainability','Manufacturability','Ethical','Health and Safety','Social','Political','Comments'));
+
+
+
+          //fetch data
+          $result = $dbh->query($sql);
+
+          while($row = $result->fetch()){
+            //loop over the rows, outputting them
             for($i=0; $i<25; $i++) {
               unset($row[$i]);
             }
             fputcsv($output, $row);
-           }while($row = $result->fetch());
+          }
 
     }
     else
     {
-      fputcsv($output, array('No submission for this session in databse yet'));
+      fputcsv($output, array('No submission for this session in database yet'));
     }
+
+
+    
+  }
+   else if($job == 'getSessions')
+  {
+
+    $sql = "select distinct session from projects";
+    
+    //fetch data
+    $result = $dbh->query($sql);
+  
+    echo json_encode($result->fetchAll());
   }
     
     $dbh=null;
