@@ -17,7 +17,7 @@ if($method == 'GET') {
     //get code of the project
     $code = $_GET['code'];
 
-    $sql = "select * from projects where Code=".$code;
+    $sql = "select * from projects where Code='".$code."'";
     
     //fetch data
     $result = $dbh->query($sql);
@@ -30,7 +30,7 @@ if($method == 'GET') {
     //check if the judge already submitted a record
     $code = $_GET['code'];
     $judge = $_GET['judge'];
-    $search = "select * from evaluations where code=".$code." and judge='".$judge."'";
+    $search = "select * from evaluations where code='".$code."' and judge='".$judge."'";
     $search_result = $dbh->query($search);
     if($row = $search_result->fetch()){
       echo json_encode('Evaluation Submitted Failed: Record already exist');
@@ -79,13 +79,61 @@ if($method == 'GET') {
       }
     }
   }
+else if($job == 'update')
+  {
+    //check if the judge already submitted a record and remove it
+    $code = $_GET['code'];
+    $judge = $_GET['judge'];
+    $search = "delete from evaluations where code='".$code."' and judge='".$judge."'";
+    $dbh->exec($search);
 
+      //insert the new event
+      $sql = "INSERT INTO evaluations (code,session,judge,da,db,dc,dd,de,df,dg,dh,pa,pb,pc,pd,total,economic,environmental,sustainability,manufacturability,ethical,healthandsafety,social,political,comments) VALUES (:code,:session,:judge,:da,:db,:dc,:dd,:de,:df,:dg,:dh,:pa,:pb,:pc,:pd,:total,:economic,:environmental,:sustainability,:manufacturability,:ethical,:healthandsafety,:social,:political,:comments)";
+      
+      //prepare the statement, auto sanitize
+      $stmt = $dbh->prepare($sql);
+      
+      //bind the parameters
+      $stmt->bindParam(':code', $_GET['code']);
+      $stmt->bindParam(':session', $_GET['session']);
+      $stmt->bindParam(':judge', $_GET['judge']);
+      $stmt->bindParam(':da', $_GET['da']);
+      $stmt->bindParam(':db', $_GET['db']);
+      $stmt->bindParam(':dc', $_GET['dc']);
+      $stmt->bindParam(':dd', $_GET['dd']);
+      $stmt->bindParam(':de', $_GET['de']);
+      $stmt->bindParam(':df', $_GET['df']);
+      $stmt->bindParam(':dg', $_GET['dg']);
+      $stmt->bindParam(':dh', $_GET['dh']);
+      $stmt->bindParam(':pa', $_GET['pa']);
+      $stmt->bindParam(':pb', $_GET['pb']);
+      $stmt->bindParam(':pc', $_GET['pc']);
+      $stmt->bindParam(':pd', $_GET['pd']);
+      $stmt->bindParam(':total', $_GET['total']);
+      $stmt->bindParam(':economic', $_GET['economic']);
+      $stmt->bindParam(':environmental', $_GET['environmental']);
+      $stmt->bindParam(':sustainability', $_GET['sustainability']);
+      $stmt->bindParam(':manufacturability', $_GET['manufacturability']);
+      $stmt->bindParam(':ethical', $_GET['ethical']);
+      $stmt->bindParam(':healthandsafety', $_GET['healthandsafety']);
+      $stmt->bindParam(':social', $_GET['social']);
+      $stmt->bindParam(':political', $_GET['political']);
+      $stmt->bindParam(':comments', $_GET['comments']);
+
+      if($stmt->execute()){
+        echo json_encode('Update Successful');
+      }
+      else
+      {
+        echo json_encode('Update Failed');
+      }
+  }
   else if($job == 'getJudges')
   {
     //get code of the project
     $code = $_GET['code'];
 
-    $sql = "select * from evaluations where code=".$code;
+    $sql = "select * from evaluations where code='".$code."'";
     
     //fetch data
     $result = $dbh->query($sql);
@@ -99,7 +147,7 @@ if($method == 'GET') {
     $code = $_GET['code'];
     $judge = $_GET['judge'];
 
-    $sql = "select * from evaluations where code=".$code." and judge='".$judge."'";
+    $sql = "select * from evaluations where code='".$code."' and judge='".$judge."'";
     
     //fetch data
     $result = $dbh->query($sql);
@@ -243,6 +291,16 @@ if($method == 'GET') {
   {
 
     $sql = "select distinct session from projects";
+    
+    //fetch data
+    $result = $dbh->query($sql);
+  
+    echo json_encode($result->fetchAll());
+  }
+  else if($job == 'getTitles')
+  {
+    $session = $_GET['session'];
+    $sql = "select * from projects where session='".$session."'";
     
     //fetch data
     $result = $dbh->query($sql);

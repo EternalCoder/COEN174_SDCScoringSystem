@@ -1,3 +1,17 @@
+$(document).ready(function(){
+    $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getSessions').done(function(result) {
+    var sessions = result;
+    if(sessions != false) {
+      console.log(sessions);
+      appendSession(sessions);
+    }
+    else
+    {
+      alert("Error: unexpected");
+    }
+    })
+})
+
 function initialization() {
   var code = localStorage.getItem('project_code');
 
@@ -8,12 +22,69 @@ function initialization() {
     //get project code
       code = null;
       
-      while (code == null || code === "") {
-        code = prompt("Please enter the project code", "");
-      }
+      //while (code == null || code === "") {
+        //code = prompt("Please enter the project code", "");
+      //}
 
     //get data from server
     localStorage.setItem('form_project_code',code);
+
+      localStorage.removeItem('project_code')
+  }
+    
+}
+
+function appendSession(sessions) {
+  var dest = document.getElementById('session');
+  var option;
+  
+  for(var i=0; i<sessions.length; i++) {
+    option = document.createElement("option");
+    option.text=sessions[i].session;
+    option.value=sessions[i].session;
+    dest.add(option);
+  }
+  changedSession();
+}
+
+function appendTitle(titles){
+  console.log('appendTitle')
+  var dest = document.getElementById('projectTitle');
+  $('#projectTitle option').remove();
+  var option;
+  
+  for(var i=0; i<titles.length; i++) {
+    option = document.createElement("option");
+    option.text=titles[i].Title;
+    option.value=titles[i].Code;
+    dest.add(option);
+  }
+  changedTitle();
+}
+
+function changedSession() {
+  console.log('changedSession')
+  var session = document.getElementById('session').value;
+  console.log(session);
+    $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getTitles&session='+session).done(function(result) {
+      var titles = result;
+      console.log('')
+      console.log(titles);
+      if(titles != false) {
+        
+        appendTitle(titles);
+      }
+      else
+      {
+        alert("Error: Invalid Code");
+      }
+    });
+    console.log('changedSession-Done')
+}
+
+function changedTitle() {
+  console.log('changeTitle')
+  var code = document.getElementById('projectTitle').value;
     $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=get&code='+code).done(function(result) {
       var project = result;
       if(project != false) {
@@ -26,6 +97,7 @@ function initialization() {
     });
       $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudges&code='+code).done(function(result) {
       var judges = result;
+      console.log(judges)
       if(judges != false) {
         console.log(judges);
         appendJudge(judges);
@@ -33,15 +105,16 @@ function initialization() {
       else
       {
         alert("Error: No evaluation form submitted for this project yet");
+        resetInfo();
+        $('#judge option').remove();
+
       }
     });
-      localStorage.removeItem('project_code')
-  }
-    
 }
 
 function appendJudge(judges) {
   var dest = document.getElementById('judge');
+  $('#judge option').remove();
   var option
   option = document.createElement("option");
   option.text= 'All Judges (average)';
@@ -58,9 +131,7 @@ function appendJudge(judges) {
 }
 
 function appendInfo(project) {
-  document.getElementById('session').value = project.Session;
   document.getElementById('room#').value = project.Location;
-  document.getElementById('projectTitle').value = project.Title;
   var names = "";
   for (var i=1; i<7; i++) {
     if(project['First '+i] != '') {
@@ -71,8 +142,7 @@ function appendInfo(project) {
       break;
     }
   }
-  document.getElementById('groupMembers').value = names;
-
+  document.getElementById('groupMembers').value = names.substr(0, names.length - 2);
   names = "";
   for (var i=1; i<5; i++) {
     if(project['Faculty '+i] != '') {
@@ -83,7 +153,7 @@ function appendInfo(project) {
       break;
     }
   }
-  document.getElementById('advisors').value = names;
+  document.getElementById('advisors').value = names.substr(0, names.length - 2);
 }
 
 function add(a, b) {
@@ -91,7 +161,7 @@ function add(a, b) {
 }
 
 function changeInfo() {
-  var code = localStorage.getItem('form_project_code');
+  var code = $('#projectTitle').val();
   var judge = $('#judge').val();
   if(judge != 'all'){
       $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudge&code='+code+'&judge='+judge).done(function(result) {
@@ -272,6 +342,7 @@ function changeInfo() {
       else
       {
         alert("Error: No evaluation form submitted for this project yet");
+        resetInfo();
       }
     });
   }
@@ -313,4 +384,30 @@ function changeGrandTotal() {
             
     }
     document.getElementById('GrandTotal').value = sum;
+}
+
+
+function resetInfo() {
+  $('#DA').val('');
+  $('#DB').val('');
+  $('#DC').val('');
+  $('#DD').val('');
+  $('#DE').val('');
+  $('#DF').val('');
+  $('#DG').val('');
+  $('#DH').val('');
+  $('#PA').val('');
+  $('#PB').val('');
+  $('#PC').val('');
+  $('#PD').val('');
+  $( "#economic" ).prop( "checked", false);
+  $( "#environmental" ).prop( "checked", false);
+  $( "#sustainability" ).prop( "checked", false);
+  $( "#manufacturability" ).prop( "checked", false);
+  $( "#ethical" ).prop( "checked", false);
+  $( "#healthandsafety" ).prop( "checked", false);
+  $( "#social" ).prop( "checked", false);
+  $( "#political" ).prop( "checked", false);
+  $('#comments').val('');
+  changeGrandTotal();
 }

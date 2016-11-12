@@ -17,30 +17,15 @@ $(document).ready(function(){
 });
 
 function login() {
-    var flag =0;
-    if($('#name').val() == 'judge') {
-        
-        for(var i=1; i<82; i++) {
-            if($('#password').val() == i) {
-                flag =1;
-                break;
-            }
-        }
-        if(flag == 1){
+    $.get('http://students.engr.scu.edu/~yli/COEN174/login.php?job=admin&name='+$("#name").val()+'&code='+md5($("#password").val())).done(function(result) {
+        if(result == 'Admin In') {
             localStorage.setItem('project_code',$('#password').val());
-            window.location.href = 'projectEvaluationForm.html';
+            window.location.href = 'menu.html';
         }
         else
         {
-            alert('invalid combination of name and password');
+        alert('Invalid combination of name and password');
         }
-    }
-    else if($('#name').val() == 'admin' && $('#password').val() == 'admin'){
-        localStorage.setItem('project_code',$('#password').val());
-        window.location.href = 'menu.html';
-    }
-    else
-    {
-        alert('invalid combination of name and password');
-    }
+    })
+
 }

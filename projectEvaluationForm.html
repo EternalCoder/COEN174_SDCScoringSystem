@@ -5,7 +5,7 @@
 <META http-equiv="X-UA-Compatible" content="IE=8">
 <TITLE>PROJECT EVALUATION FORM</TITLE>
 <link rel="stylesheet" type="text/css" href="projectEvaluationForm.css">
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="jquery-3.1.1.min.js"></script>
 <script src="projectEvaluationForm.js"></script>
 </HEAD>
 
@@ -39,21 +39,16 @@
 </TR>
 <TR>
 	<TD class="tr2 td0"><P class="p0 ft2">Room #: <textarea id="room#" rows="2" cols="25" disabled style="resize: none"></textarea></P></TD>
-	<TD class="tr2 td1"><P class="p3 ft1">Judge’s Name:<select id="judge">
-  <option value="NIL">--Select Your Name--</option>
-  <option value="Kevin">Kevin</option>
-  <option value="Matt">Matt</option>
-  <option value="Yang">Yang</option>
-</select></P></TD>
+	<TD class="tr2 td1"><P class="p3 ft1">Judge’s Name:<input type="text" name="judge" id="judge" onkeyup=changeInfo() placeholder="Enter your name"></P></TD>
 </TR>
 </TABLE>
 <P class="p4 ft3">Project Title: <input type="text" name="ProjectTitle" id='projectTitle' value="" size="104" disabled></P>
 <P class="p5 ft3">Group Members:<input type="text" name="GroupMembers" id='groupMembers' value="" size="100" disabled></P>
 <P class="p6 ft3">Advisors: <input type="text" name="Advisors" id ='advisors' value="" size="108.5" disabled></P>
 <P class="p7 ft2">Please evaluate senior engineering design projects and presentations using the following point system:</P>
-<P class="p8 ft4">5 = Excellent (at the level of an <NOBR>entry-level</NOBR> engineer you would hire) 4 = Good (at the level of an accomplished college senior)</P>
+<P class="p8 ft4">5 = Excellent (at the level of an <NOBR>entry-level</NOBR> engineer you would hire) </p><P class="p8 ft4">4 = Good (at the level of an accomplished college senior)</P>
 <P class="p9 ft3">3 = Average (at the level typical of a college senior)</P>
-<P class="p10 ft3">2 = Below Average (not up to the expectations for a college senior) 1 = Poor (significant errors or omissions)</P>
+<P class="p10 ft3">2 = Below Average (not up to the expectations for a college senior) </p><P class="p10 ft3">1 = Poor (significant errors or omissions)</P>
 <P class="p11 ft2">N/A if no appropriate score applies</P>
 <TABLE cellpadding=0 cellspacing=0 class="t1">
 <TR>

@@ -6,7 +6,7 @@ function initialization() {
 
   localStorage.setItem('project_temp_code',code);
   if(code == null){
-    window.location.href = 'login.html';
+    window.location.href = 'judge.html';
   }
   else
   {
@@ -20,7 +20,7 @@ function initialization() {
     else
     {
       alert("Error: Invalid Code");
-      window.location.href = 'login.html';
+      window.location.href = 'judge.html';
     }
   });
   }
@@ -42,7 +42,7 @@ function appendInfo(project) {
       break;
     }
   }
-  document.getElementById('groupMembers').value = names;
+  document.getElementById('groupMembers').value = names.substr(0, names.length - 2);
 
   names = "";
   for (var i=1; i<5; i++) {
@@ -54,12 +54,12 @@ function appendInfo(project) {
       break;
     }
   }
-  document.getElementById('advisors').value = names;
+  document.getElementById('advisors').value = names.substr(0, names.length - 2);
 }
 
 function submit() {
-  if(document.getElementById('judge').value == 'NIL') {
-    alert('Please select your name from the judge list');
+  if(document.getElementById('judge').value == '') {
+    alert('Please enter your name');
   }
   else {
     var list = document.getElementsByClassName('score');
@@ -86,11 +86,26 @@ function submit() {
             var url = 'http://students.engr.scu.edu/~yli/COEN174/index.php?job=post&code='+newEva.code+'&session='+newEva.session+'&judge='+newEva.judge+'&da='+newEva.da+'&db='+newEva.db+'&dc='+newEva.dc+'&dd='+newEva.dd+'&de='+newEva.de+'&df='+newEva.df+'&dg='+newEva.dg+'&dh='+newEva.dg+'&pa='+newEva.pa+'&pb='+newEva.pb+'&pc='+newEva.pc+'&pd='+newEva.pd+'&total='+newEva.total+'&economic='+newEva.economic+'&environmental='+newEva.environmental+'&sustainability='+newEva.sustainability+'&manufacturability='+newEva.manufacturability+'&ethical='+newEva.ethical+'&healthandsafety='+newEva.healthandsafety+'&social='+newEva.social+'&political='+newEva.political+'&comments='+newEva.comments;
             console.log(url);
               $.get(url).done(function(result) {
-                alert(result);
+                
                 console.log(result);
                 if(result != 'Evaluation Submitted Failed: Record already exist'){
+                  alert(result);
                   localStorage.removeItem('project_temp_code');
-                    window.location.href = 'login.html';
+                    window.location.href = 'judge.html';
+                }
+                else
+                {
+                  r=confirm('Record already exist, do you wish to re-submit?')
+                  if(r){
+                    url = 'http://students.engr.scu.edu/~yli/COEN174/index.php?job=update&code='+newEva.code+'&session='+newEva.session+'&judge='+newEva.judge+'&da='+newEva.da+'&db='+newEva.db+'&dc='+newEva.dc+'&dd='+newEva.dd+'&de='+newEva.de+'&df='+newEva.df+'&dg='+newEva.dg+'&dh='+newEva.dg+'&pa='+newEva.pa+'&pb='+newEva.pb+'&pc='+newEva.pc+'&pd='+newEva.pd+'&total='+newEva.total+'&economic='+newEva.economic+'&environmental='+newEva.environmental+'&sustainability='+newEva.sustainability+'&manufacturability='+newEva.manufacturability+'&ethical='+newEva.ethical+'&healthandsafety='+newEva.healthandsafety+'&social='+newEva.social+'&political='+newEva.political+'&comments='+newEva.comments;
+                    $.get(url).done(function(result) {
+                      alert(result);
+                      if(result == 'Update Successful') {
+                        localStorage.removeItem('project_temp_code');
+                        window.location.href = 'judge.html';
+                      }
+                    });
+                  }
                 }
               });
         }
@@ -101,6 +116,75 @@ function submit() {
 
 function add(a, b) {
   return a + b;
+}
+
+function changeInfo(){
+  var code = localStorage.getItem('project_temp_code');
+  var judge = $('#judge').val();
+  if(judge != ''){
+      $.get('http://students.engr.scu.edu/~yli/COEN174/index.php?job=getJudge&code='+code+'&judge='+judge).done(function(result) {
+      var eva = result;
+      if(eva != false) {
+        console.log('changeInfo');
+        console.log(eva);
+        updateInfo(eva);
+      }
+      else
+      {
+        resetInfo();
+      }
+    });
+  }
+}
+
+function resetInfo() {
+  $('#DA').val('NIL');
+  $('#DB').val('NIL');
+  $('#DC').val('NIL');
+  $('#DD').val('NIL');
+  $('#DE').val('NIL');
+  $('#DF').val('NIL');
+  $('#DG').val('NIL');
+  $('#DH').val('NIL');
+  $('#PA').val('NIL');
+  $('#PB').val('NIL');
+  $('#PC').val('NIL');
+  $('#PD').val('NIL');
+  $( "#economic" ).prop( "checked", false);
+  $( "#environmental" ).prop( "checked", false);
+  $( "#sustainability" ).prop( "checked", false);
+  $( "#manufacturability" ).prop( "checked", false);
+  $( "#ethical" ).prop( "checked", false);
+  $( "#healthandsafety" ).prop( "checked", false);
+  $( "#social" ).prop( "checked", false);
+  $( "#political" ).prop( "checked", false);
+  $('#comments').val('');
+  changeGrandTotal();
+}
+
+function updateInfo(eva) {
+  $('#DA').val(eva.da);
+  $('#DB').val(eva.db);
+  $('#DC').val(eva.dc);
+  $('#DD').val(eva.dd);
+  $('#DE').val(eva.de);
+  $('#DF').val(eva.df);
+  $('#DG').val(eva.dg);
+  $('#DH').val(eva.dh);
+  $('#PA').val(eva.pa);
+  $('#PB').val(eva.pb);
+  $('#PC').val(eva.pc);
+  $('#PD').val(eva.pd);
+  $( "#economic" ).prop( "checked", eva.economic=== "true");
+  $( "#environmental" ).prop( "checked", eva.environmental=== "true");
+  $( "#sustainability" ).prop( "checked", eva.sustainability=== "true");
+  $( "#manufacturability" ).prop( "checked", eva.manufacturability=== "true");
+  $( "#ethical" ).prop( "checked", eva.ethical=== "true");
+  $( "#healthandsafety" ).prop( "checked", eva.healthandsafety=== "true");
+  $( "#social" ).prop( "checked", eva.social=== "true");
+  $( "#political" ).prop( "checked", eva.political=== "true");
+  $('#comments').val(eva.comments);
+  changeGrandTotal();
 }
 
 function changeGrandTotal() {
