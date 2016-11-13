@@ -71,7 +71,7 @@ function submit() {
         }
     }
     if(flag) {
-      alert('You have not complete the score sheet');
+      alert('You have not completed the score sheet');
     }
     else
       {
@@ -88,14 +88,14 @@ function submit() {
               $.get(url).done(function(result) {
                 
                 console.log(result);
-                if(result != 'Evaluation Submitted Failed: Record already exist'){
+                if(result == 'Evaluation Submitted Successfully'){
                   alert(result);
                   localStorage.removeItem('project_temp_code');
                     window.location.href = 'judge.html';
                 }
-                else
+                else if (result == 'Evaluation Submission Failed: Record already exists')
                 {
-                  r=confirm('Record already exist, do you wish to re-submit?')
+                  r=confirm('Record already exists, do you wish to re-submit?')
                   if(r){
                     url = 'http://students.engr.scu.edu/~yli/COEN174/index.php?job=update&code='+newEva.code+'&session='+newEva.session+'&judge='+newEva.judge+'&da='+newEva.da+'&db='+newEva.db+'&dc='+newEva.dc+'&dd='+newEva.dd+'&de='+newEva.de+'&df='+newEva.df+'&dg='+newEva.dg+'&dh='+newEva.dg+'&pa='+newEva.pa+'&pb='+newEva.pb+'&pc='+newEva.pc+'&pd='+newEva.pd+'&total='+newEva.total+'&economic='+newEva.economic+'&environmental='+newEva.environmental+'&sustainability='+newEva.sustainability+'&manufacturability='+newEva.manufacturability+'&ethical='+newEva.ethical+'&healthandsafety='+newEva.healthandsafety+'&social='+newEva.social+'&political='+newEva.political+'&comments='+newEva.comments;
                     $.get(url).done(function(result) {
@@ -106,6 +106,10 @@ function submit() {
                       }
                     });
                   }
+                }
+                else
+                {
+                  alert("ERROR:"+result);
                 }
               });
         }

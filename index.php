@@ -33,7 +33,7 @@ if($method == 'GET') {
     $search = "select * from evaluations where code='".$code."' and judge='".$judge."'";
     $search_result = $dbh->query($search);
     if($row = $search_result->fetch()){
-      echo json_encode('Evaluation Submitted Failed: Record already exist');
+      echo json_encode('Evaluation Submission Failed: Record already exists');
     }
     else
     {
@@ -71,11 +71,11 @@ if($method == 'GET') {
       $stmt->bindParam(':comments', $_GET['comments']);
 
       if($stmt->execute()){
-        echo json_encode('Evaluation Submitted Successful');
+        echo json_encode('Evaluation Submitted Successfully');
       }
       else
       {
-        echo json_encode('Evaluation Submitted Failed');
+        echo json_encode('Evaluation Submission Failed');
       }
     }
   }
